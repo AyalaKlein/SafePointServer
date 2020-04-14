@@ -5,6 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SafePoint.Data;
+using SafePoint.Data.Entities;
+using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 
 namespace SafePoint.Server
 {
@@ -24,6 +28,15 @@ namespace SafePoint.Server
 
             services.AddDbContext<SafePointContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("SafePointContext")));
+
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<SafePointContext>();
+
+            services.AddIdentityServer()
+                .AddApiAuthorization<ApplicationUser, SafePointContext>();
+            services.AddAuthentication()
+                .AddIdentityServerJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +50,8 @@ namespace SafePoint.Server
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseIdentityServer();
 
             app.UseAuthorization();
 
