@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SafePoint.Data
+namespace SafePoint.Data.Entities
 {
     public class Shelter
     {

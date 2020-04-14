@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using SafePoint.Server.Data;
+using SafePoint.Data;
 
 namespace SafePoint.Server
 {
@@ -30,7 +30,7 @@ namespace SafePoint.Server
             services.AddControllers();
 
             services.AddDbContext<SafePointContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("SafePointContext")));
+                    options.UseNpgsql(Configuration.GetConnectionString("SafePointContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

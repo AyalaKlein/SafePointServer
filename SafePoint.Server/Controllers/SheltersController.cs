@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SafePoint.Data;
+using SafePoint.Data.Entities;
 
 namespace SafePoint.Server.Controllers
 {
@@ -24,14 +25,14 @@ namespace SafePoint.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Shelter>>> GetShelter()
         {
-            return await _context.Shelter.ToListAsync();
+            return await _context.Shelters.ToListAsync();
         }
 
         // GET: api/Shelters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Shelter>> GetShelter(int id)
         {
-            var shelter = await _context.Shelter.FindAsync(id);
+            var shelter = await _context.Shelters.FindAsync(id);
 
             if (shelter == null)
             {
@@ -79,7 +80,7 @@ namespace SafePoint.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Shelter>> PostShelter(Shelter shelter)
         {
-            _context.Shelter.Add(shelter);
+            _context.Shelters.Add(shelter);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetShelter", new { id = shelter.Id }, shelter);
@@ -89,13 +90,13 @@ namespace SafePoint.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Shelter>> DeleteShelter(int id)
         {
-            var shelter = await _context.Shelter.FindAsync(id);
+            var shelter = await _context.Shelters.FindAsync(id);
             if (shelter == null)
             {
                 return NotFound();
             }
 
-            _context.Shelter.Remove(shelter);
+            _context.Shelters.Remove(shelter);
             await _context.SaveChangesAsync();
 
             return shelter;
@@ -103,7 +104,7 @@ namespace SafePoint.Server.Controllers
 
         private bool ShelterExists(int id)
         {
-            return _context.Shelter.Any(e => e.Id == id);
+            return _context.Shelters.Any(e => e.Id == id);
         }
     }
 }
