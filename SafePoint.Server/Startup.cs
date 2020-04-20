@@ -9,6 +9,7 @@ using SafePoint.Data.Entities;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
+using IdentityServer4.Models;
 
 namespace SafePoint.Server
 {
@@ -30,11 +31,17 @@ namespace SafePoint.Server
                     options.UseNpgsql(Configuration.GetConnectionString("SafePointContext")));
 
             services.AddDefaultIdentity<ApplicationUser>()
-                .AddDefaultUI()
                 .AddEntityFrameworkStores<SafePointContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, SafePointContext>();
+                      .AddDeveloperSigningCredential()
+                      .AddAspNetIdentity<ApplicationUser>()
+                      .AddInMemoryPersistedGrants()
+                      .AddInMemoryClients(Config.GetClients())
+                      .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                      .AddInMemoryApiResources(Config.GetApiResources())
+                      .AddDefaultEndpoints();
+
             services.AddAuthentication()
                 .AddIdentityServerJwt();
         }
@@ -47,7 +54,7 @@ namespace SafePoint.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();
