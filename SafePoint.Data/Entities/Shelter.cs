@@ -8,10 +8,10 @@ namespace SafePoint.Data.Entities
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Description { get; set; }
 
-        public decimal Lat { get; set; }
+        public decimal LocX { get; set; }
 
-        public decimal Lon { get; set; }
+        public decimal LocY { get; set; }
     }
 }
