@@ -107,7 +107,7 @@ namespace SafePoint.Server.Controllers
             return _context.Shelters.Any(e => e.Id == id);
         }
 
-        [HttpGet]
+        [HttpGet("GetNearestShelters")]
         public async Task<ActionResult<IEnumerable<Shelter>>> GetNearestShelters(decimal locX, decimal locY, double meterRadius)
         {
             var currentLocation = new Location(locX, locY);
