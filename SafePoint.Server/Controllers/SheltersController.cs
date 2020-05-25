@@ -111,8 +111,9 @@ namespace SafePoint.Server.Controllers
         public async Task<ActionResult<IEnumerable<Shelter>>> GetNearestShelters(decimal locX, decimal locY, double meterRadius)
         {
             var currentLocation = new Location(locX, locY);
-            var shelters = await _context.Shelters.Where(currShelter => currentLocation.CalculateDistance(new Location(currShelter.LocX, currShelter.LocY)) > meterRadius).ToListAsync();
 
+            var allShelters = await _context.Shelters.ToListAsync();
+            var shelters = allShelters.Where(currShelter => currentLocation.CalculateDistance(new Location(currShelter.LocX, currShelter.LocY)) > meterRadius).ToList();
             return shelters;
         }
     }
