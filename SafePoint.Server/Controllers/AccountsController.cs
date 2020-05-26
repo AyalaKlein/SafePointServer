@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SafePoint.Data.Entities;
+using SafePoint.Server.BindingModels;
 
 namespace SafePoint.Server.Controllers
 {
@@ -13,17 +14,17 @@ namespace SafePoint.Server.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountsController(IUserStore<ApplicationUser> userStore)
+        public AccountsController(UserManager<ApplicationUser> userManager)
         {
-            _userStore = userStore;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(ApplicationUser user)
+        public async Task<ActionResult> Register(UserRegistrationObject user)
         {
-            var result = await _userStore.CreateAsync(user, HttpContext.RequestAborted);
+            var result = await _userManager.CreateAsync(new ApplicationUser { UserName = user.UserName, Email = user.Email }, user.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);

@@ -33,6 +33,20 @@ namespace SafePoint.Server
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<SafePointContext>();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+
+            });
+
             services.AddIdentityServer()
                       .AddDeveloperSigningCredential()
                       .AddAspNetIdentity<ApplicationUser>()
