@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using SafePoint.Data;
 using SafePoint.Data.Entities;
 
@@ -108,13 +109,21 @@ namespace SafePoint.Server.Controllers
         }
 
         [HttpGet("GetNearestShelters")]
-        public async Task<ActionResult<IEnumerable<Shelter>>> GetNearestShelters(decimal locX, decimal locY, double meterRadius)
+        public async Task<ActionResult<NearestShelters>> GetNearestShelters(decimal locX, decimal locY, double meterRadius)
         {
+            int refreshTime = 10 * 1000;
             var currentLocation = new Location(locX, locY);
 
             var allShelters = await _context.Shelters.ToListAsync();
             var shelters = allShelters.Where(currShelter => currentLocation.CalculateDistance(new Location(currShelter.LocX, currShelter.LocY)) > meterRadius).ToList();
-            return shelters;
+
+            var result = new NearestShelters
+            {
+                refreshTime = refreshTime,
+                shelters = shelters
+            };
+
+            return result;
         }
     }
 }
