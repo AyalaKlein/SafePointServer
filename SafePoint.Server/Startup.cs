@@ -56,8 +56,11 @@ namespace SafePoint.Server
                       .AddInMemoryApiResources(Config.GetApiResources())
                       .AddDefaultEndpoints();
 
+            services.AddCors();
+
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +78,8 @@ namespace SafePoint.Server
             app.UseIdentityServer();
 
             app.UseAuthorization();
+
+            app.UseCors(o=> o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {
