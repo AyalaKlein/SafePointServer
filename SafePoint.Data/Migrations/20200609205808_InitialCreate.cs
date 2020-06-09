@@ -86,7 +86,10 @@ namespace SafePoint.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Description = table.Column<string>(nullable: true),
+                    LocX = table.Column<decimal>(nullable: false),
+                    LocY = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {

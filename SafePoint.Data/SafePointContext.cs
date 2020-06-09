@@ -18,6 +18,14 @@ namespace SafePoint.Data
         public SafePointContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
             : base(options, operationalStoreOptions)
         {
+            
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Shelter>().Property(o => o.Id)
+                .HasIdentityOptions(startValue: 100).UseIdentityAlwaysColumn();
         }
 
         public DbSet<Shelter> Shelters { get; set; }

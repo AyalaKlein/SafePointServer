@@ -81,6 +81,7 @@ namespace SafePoint.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Shelter>> PostShelter(Shelter shelter)
         {
+            shelter.Id = 0;
             _context.Shelters.Add(shelter);
             await _context.SaveChangesAsync();
 

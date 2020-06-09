@@ -10,8 +10,8 @@ using SafePoint.Data;
 namespace SafePoint.Data.Migrations
 {
     [DbContext(typeof(SafePointContext))]
-    [Migration("20200414175256_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200609211945_Update-Shelters")]
+    partial class UpdateShelters
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -306,7 +306,17 @@ namespace SafePoint.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:IdentitySequenceOptions", "'100', '1', '', '', 'False', '1'")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("LocX")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("LocY")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
