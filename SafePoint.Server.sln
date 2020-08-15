@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SafePoint.Server", "SafePoint.Server\SafePoint.Server.csproj", "{69DE4D8F-3A90-4961-A391-41724565FF5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SafePoint.Server", "SafePoint.Server\SafePoint.Server.csproj", "{69DE4D8F-3A90-4961-A391-41724565FF5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SafePoint.Data", "SafePoint.Data\SafePoint.Data.csproj", "{F07D07E6-7191-401C-AB55-C99999D8855E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirebaseCloudMessaging", "FirebaseCloudMessaging\FirebaseCloudMessaging.csproj", "{6260A661-837E-42F7-98F4-AEE2C65F2DFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F07D07E6-7191-401C-AB55-C99999D8855E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F07D07E6-7191-401C-AB55-C99999D8855E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F07D07E6-7191-401C-AB55-C99999D8855E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6260A661-837E-42F7-98F4-AEE2C65F2DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6260A661-837E-42F7-98F4-AEE2C65F2DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6260A661-837E-42F7-98F4-AEE2C65F2DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6260A661-837E-42F7-98F4-AEE2C65F2DFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

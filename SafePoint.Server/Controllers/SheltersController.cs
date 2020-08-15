@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FirebaseAdmin.Messaging;
+using FirebaseCloudMessaging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -125,6 +127,68 @@ namespace SafePoint.Server.Controllers
             };
 
             return result;
+        }
+
+        [HttpGet("SearchForShelter")]
+        public async Task<ActionResult<Shelter>> SearchForShelter(string operationGuid, string fcmToken, decimal locX, decimal locY)
+        {
+            const int avg_distance_meters = 450; // 450 meters for average person when fast walking
+
+            // Remove the person from his old shelter
+            var currentShelter = await _context.Shelters.FirstAsync(x => x.UsersInShelter.Contains(fcmToken));
+            currentShelter.UsersInShelter.Remove(fcmToken);
+            _context.Shelters.Update(currentShelter);
+
+            var currentLocation = new Location(locX, locY);
+            var closestShelters = (await GetNearestShelters(locX, locY, avg_distance_meters)).Value;
+
+            double minDistance = double.MaxValue;
+            double selectedShelterMinDistance = double.MaxValue;
+            Shelter selectedShelter = null;
+            Shelter closestShelter = null;
+
+            closestShelters.shelters.ForEach(shel =>
+            {
+                var dist = currentLocation.CalculateDistance(new Location(shel.LocX, shel.LocY));
+
+                // Get the closest available shelter
+                if (dist < selectedShelterMinDistance && shel.UsersInShelter.Count < shel.MaxCapacity)
+                {
+                    selectedShelterMinDistance = dist;
+                    selectedShelter = shel;
+                }
+
+                // Get the closest shelter
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    closestShelter = shel;
+                }
+            });
+
+            Shelter chosenShelter = (selectedShelter != null && selectedShelter.UsersInShelter.Count < selectedShelter.MaxCapacity) ? selectedShelter : closestShelter;
+            List<string> userTokens = chosenShelter.UsersInShelter;
+            chosenShelter.UsersInShelter.Add(fcmToken);
+            _context.Shelters.Update(chosenShelter);
+
+            await _context.SaveChangesAsync();
+
+            if (selectedShelter == null)
+            {
+                // Notify all the users in closestShelter.UsersInShelter to find new shelter using FCM and the opertion guid
+                var message = new MulticastMessage()
+                {
+                    Data = new Dictionary<string, string>
+                    {
+                        ["operationGuid"] = operationGuid
+                    },
+                    Tokens = userTokens
+                };
+
+                await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
+            }
+
+            return chosenShelter;
         }
     }
 }
