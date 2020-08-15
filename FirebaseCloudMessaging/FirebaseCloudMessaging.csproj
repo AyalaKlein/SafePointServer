@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FirebaseAdmin" Version="1.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="key.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
