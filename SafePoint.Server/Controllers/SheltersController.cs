@@ -135,16 +135,19 @@ namespace SafePoint.Server.Controllers
             const int avg_distance_meters = 450; // 450 meters for average person when fast walking
 
             // Remove the person from his old shelter
-            var oldShelter = await _context.ShelterUsers.FirstAsync(x => x.UserToken == fcmToken);
+            var oldShelter = await _context.ShelterUsers.Where(x => x.UserToken == fcmToken).ToListAsync();
 
             // Check if the user already changed shelter during this operation
-            if (oldShelter.operationType == operationGuid)
+            if (oldShelter != null && oldShelter.Count > 0)
             {
-                return await _context.Shelters.FirstAsync(x => x.Id == oldShelter.ShelterId);
-            }
+                if (oldShelter[0].OperationType == operationGuid)
+                {
+                    return await _context.Shelters.FirstAsync(x => x.Id == oldShelter[0].ShelterId);
+                }
 
-            _context.ShelterUsers.Remove(oldShelter);
-            await _context.SaveChangesAsync();
+                _context.ShelterUsers.Remove(oldShelter[0]);
+                await _context.SaveChangesAsync();
+            }
 
             var currentLocation = new Location(locX, locY);
             var closestShelters = (await GetNearestShelters(locX, locY, avg_distance_meters)).Value;
@@ -182,7 +185,7 @@ namespace SafePoint.Server.Controllers
             {
                 ShelterId = chosenShelter.Id,
                 UserToken = fcmToken,
-                operationType = operationGuid
+                OperationType = operationGuid
             });
 
             await _context.SaveChangesAsync();
@@ -208,10 +211,13 @@ namespace SafePoint.Server.Controllers
         [HttpPost("ChangeUserFcmToken")]
         public async void ChangeUserFcmToken(string oldToken, string newToken)
         {
-            var currShelterUser = await _context.ShelterUsers.FirstAsync(shel => shel.UserToken == oldToken);
-            currShelterUser.UserToken = newToken;
-            _context.ShelterUsers.Update(currShelterUser);
-            await _context.SaveChangesAsync();
+            if (_context.ShelterUsers.Count(shel => shel.UserToken == oldToken) > 0)
+            {
+                var currShelterUser = await _context.ShelterUsers.FirstAsync(shel => shel.UserToken == oldToken);
+                currShelterUser.UserToken = newToken;
+                _context.ShelterUsers.Update(currShelterUser);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -10,6 +10,6 @@ namespace SafePoint.Data.Entities
 
         public string UserToken;
 
-        public string operationType;
+        public string OperationType;
     }
 }
