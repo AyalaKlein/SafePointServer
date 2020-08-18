@@ -135,9 +135,9 @@ namespace SafePoint.Server.Controllers
             const int avg_distance_meters = 450; // 450 meters for average person when fast walking
 
             // Remove the person from his old shelter
-            var currentShelter = await _context.Shelters.FirstAsync(x => x.UsersInShelter.Contains(fcmToken));
-            currentShelter.UsersInShelter.Remove(fcmToken);
-            _context.Shelters.Update(currentShelter);
+            var oldShelters = await _context.ShelterUsers.Where(x => x.UserToken == fcmToken).ToListAsync();
+            _context.ShelterUsers.RemoveRange(oldShelters);
+            await _context.SaveChangesAsync();
 
             var currentLocation = new Location(locX, locY);
             var closestShelters = (await GetNearestShelters(locX, locY, avg_distance_meters)).Value;
@@ -152,7 +152,8 @@ namespace SafePoint.Server.Controllers
                 var dist = currentLocation.CalculateDistance(new Location(shel.LocX, shel.LocY));
 
                 // Get the closest available shelter
-                if (dist < selectedShelterMinDistance && shel.UsersInShelter.Count < shel.MaxCapacity)
+                if (dist < selectedShelterMinDistance && 
+                    _context.ShelterUsers.CountAsync(x => x.ShelterId == shel.Id).Result < shel.MaxCapacity)
                 {
                     selectedShelterMinDistance = dist;
                     selectedShelter = shel;
@@ -166,10 +167,15 @@ namespace SafePoint.Server.Controllers
                 }
             });
 
-            Shelter chosenShelter = (selectedShelter != null && selectedShelter.UsersInShelter.Count < selectedShelter.MaxCapacity) ? selectedShelter : closestShelter;
-            List<string> userTokens = chosenShelter.UsersInShelter;
-            chosenShelter.UsersInShelter.Add(fcmToken);
-            _context.Shelters.Update(chosenShelter);
+            Shelter chosenShelter = selectedShelter != null ? selectedShelter : closestShelter;
+
+            List<string> tokens = await _context.ShelterUsers.Where(x => x.ShelterId == chosenShelter.Id).Select(x => x.UserToken).ToListAsync();
+
+            _context.ShelterUsers.Add(new ShelterUsers()
+            {
+                ShelterId = chosenShelter.Id,
+                UserToken = fcmToken
+            });
 
             await _context.SaveChangesAsync();
 
@@ -182,7 +188,7 @@ namespace SafePoint.Server.Controllers
                     {
                         ["operationGuid"] = operationGuid
                     },
-                    Tokens = userTokens
+                    Tokens = tokens
                 };
 
                 await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);

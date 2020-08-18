@@ -26,8 +26,11 @@ namespace SafePoint.Data
             base.OnModelCreating(builder);
             builder.Entity<Shelter>().Property(o => o.Id)
                 .HasIdentityOptions(startValue: 100).UseIdentityAlwaysColumn();
+            builder.Entity<ShelterUsers>();
         }
 
         public DbSet<Shelter> Shelters { get; set; }
+
+        public DbSet<ShelterUsers> ShelterUsers { get; set; }
     }
 }
