@@ -204,5 +204,14 @@ namespace SafePoint.Server.Controllers
 
             return chosenShelter;
         }
+
+        [HttpPost("ChangeUserFcmToken")]
+        public async void ChangeUserFcmToken(string oldToken, string newToken)
+        {
+            var currShelterUser = await _context.ShelterUsers.FirstAsync(shel => shel.UserToken == oldToken);
+            currShelterUser.UserToken = newToken;
+            _context.ShelterUsers.Update(currShelterUser);
+            await _context.SaveChangesAsync();
+        }
     }
 }
