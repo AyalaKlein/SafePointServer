@@ -135,8 +135,15 @@ namespace SafePoint.Server.Controllers
             const int avg_distance_meters = 450; // 450 meters for average person when fast walking
 
             // Remove the person from his old shelter
-            var oldShelters = await _context.ShelterUsers.Where(x => x.UserToken == fcmToken).ToListAsync();
-            _context.ShelterUsers.RemoveRange(oldShelters);
+            var oldShelter = await _context.ShelterUsers.FirstAsync(x => x.UserToken == fcmToken);
+
+            // Check if the user already changed shelter during this operation
+            if (oldShelter.operationType == operationGuid)
+            {
+                return await _context.Shelters.FirstAsync(x => x.Id == oldShelter.ShelterId);
+            }
+
+            _context.ShelterUsers.Remove(oldShelter);
             await _context.SaveChangesAsync();
 
             var currentLocation = new Location(locX, locY);
@@ -174,7 +181,8 @@ namespace SafePoint.Server.Controllers
             _context.ShelterUsers.Add(new ShelterUsers()
             {
                 ShelterId = chosenShelter.Id,
-                UserToken = fcmToken
+                UserToken = fcmToken,
+                operationType = operationGuid
             });
 
             await _context.SaveChangesAsync();

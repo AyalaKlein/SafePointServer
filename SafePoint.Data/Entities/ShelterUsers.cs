@@ -9,5 +9,7 @@ namespace SafePoint.Data.Entities
         public int ShelterId;
 
         public string UserToken;
+
+        public string operationType;
     }
 }
