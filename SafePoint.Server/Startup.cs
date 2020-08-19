@@ -61,6 +61,8 @@ namespace SafePoint.Server
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
+            services.AddSwaggerGen();
+
             services.AddMvc().AddNewtonsoftJson();
         }
 
@@ -73,7 +75,15 @@ namespace SafePoint.Server
             }
 
             //app.UseHttpsRedirection();
+            app.UseSwagger();
 
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
             app.UseRouting();
             app.UseAuthentication();
             app.UseIdentityServer();
