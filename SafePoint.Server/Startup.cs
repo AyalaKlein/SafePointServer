@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using IdentityServer4.Models;
+using FirebaseAdmin.Messaging;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace SafePoint.Server
 {
@@ -64,6 +67,11 @@ namespace SafePoint.Server
             services.AddSwaggerGen();
 
             services.AddMvc().AddNewtonsoftJson();
+
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromAccessToken(Configuration["FCMToken"]),
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
