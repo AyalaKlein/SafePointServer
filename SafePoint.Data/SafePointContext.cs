@@ -27,10 +27,13 @@ namespace SafePoint.Data
             builder.Entity<Shelter>().Property(o => o.Id)
                 .HasIdentityOptions(startValue: 100).UseIdentityAlwaysColumn();
             builder.Entity<ShelterUsers>().HasKey("ShelterId", "UserToken");
+
+            builder.Entity<NearbyShelter>().HasNoKey();
         }
 
         public DbSet<Shelter> Shelters { get; set; }
 
         public DbSet<ShelterUsers> ShelterUsers { get; set; }
+        public DbSet<NearbyShelter> NearbyShelters { get; set; }
     }
 }
