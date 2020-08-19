@@ -135,9 +135,19 @@ namespace SafePoint.Server.Controllers
             const int avg_distance_meters = 450; // 450 meters for average person when fast walking
 
             // Remove the person from his old shelter
-            var currentShelter = await _context.Shelters.FirstAsync(x => x.UsersInShelter.Contains(fcmToken));
-            currentShelter.UsersInShelter.Remove(fcmToken);
-            _context.Shelters.Update(currentShelter);
+            var oldShelter = await _context.ShelterUsers.Where(x => x.UserToken == fcmToken).ToListAsync();
+
+            // Check if the user already changed shelter during this operation
+            if (oldShelter != null && oldShelter.Count > 0)
+            {
+                if (oldShelter[0].OperationType == operationGuid)
+                {
+                    return await _context.Shelters.FirstAsync(x => x.Id == oldShelter[0].ShelterId);
+                }
+
+                _context.ShelterUsers.Remove(oldShelter[0]);
+                await _context.SaveChangesAsync();
+            }
 
             var currentLocation = new Location(locX, locY);
             var closestShelters = (await GetNearestShelters(locX, locY, avg_distance_meters)).Value;
@@ -152,7 +162,8 @@ namespace SafePoint.Server.Controllers
                 var dist = currentLocation.CalculateDistance(new Location(shel.LocX, shel.LocY));
 
                 // Get the closest available shelter
-                if (dist < selectedShelterMinDistance && shel.UsersInShelter.Count < shel.MaxCapacity)
+                if (dist < selectedShelterMinDistance && 
+                    _context.ShelterUsers.CountAsync(x => x.ShelterId == shel.Id).Result < shel.MaxCapacity)
                 {
                     selectedShelterMinDistance = dist;
                     selectedShelter = shel;
@@ -166,10 +177,16 @@ namespace SafePoint.Server.Controllers
                 }
             });
 
-            Shelter chosenShelter = (selectedShelter != null && selectedShelter.UsersInShelter.Count < selectedShelter.MaxCapacity) ? selectedShelter : closestShelter;
-            List<string> userTokens = chosenShelter.UsersInShelter;
-            chosenShelter.UsersInShelter.Add(fcmToken);
-            _context.Shelters.Update(chosenShelter);
+            Shelter chosenShelter = selectedShelter != null ? selectedShelter : closestShelter;
+
+            List<string> tokens = await _context.ShelterUsers.Where(x => x.ShelterId == chosenShelter.Id).Select(x => x.UserToken).ToListAsync();
+
+            _context.ShelterUsers.Add(new ShelterUsers()
+            {
+                ShelterId = chosenShelter.Id,
+                UserToken = fcmToken,
+                OperationType = operationGuid
+            });
 
             await _context.SaveChangesAsync();
 
@@ -182,13 +199,25 @@ namespace SafePoint.Server.Controllers
                     {
                         ["operationGuid"] = operationGuid
                     },
-                    Tokens = userTokens
+                    Tokens = tokens
                 };
 
                 await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
             }
 
             return chosenShelter;
+        }
+
+        [HttpPost("ChangeUserFcmToken")]
+        public async void ChangeUserFcmToken(string oldToken, string newToken)
+        {
+            if (_context.ShelterUsers.Count(shel => shel.UserToken == oldToken) > 0)
+            {
+                var currShelterUser = await _context.ShelterUsers.FirstAsync(shel => shel.UserToken == oldToken);
+                currShelterUser.UserToken = newToken;
+                _context.ShelterUsers.Update(currShelterUser);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

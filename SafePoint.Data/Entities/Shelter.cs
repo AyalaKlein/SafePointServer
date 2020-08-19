@@ -14,8 +14,6 @@ namespace SafePoint.Data.Entities
 
         public decimal LocY { get; set; }
 
-        public decimal MaxCapacity { get; set; }
-
-        public List<string> UsersInShelter { get; set; }
+        public int MaxCapacity { get; set; }
     }
 }
