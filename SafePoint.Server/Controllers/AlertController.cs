@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace SafePoint.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AlertController : ControllerBase
     {
-        [HttpPost("alert")]
+        [HttpPost]
         public async Task<ActionResult> GenerateAnAlert(double locX, double locY, double meterRadius)
         {
             var message = new Message()
