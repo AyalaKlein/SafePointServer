@@ -10,7 +10,8 @@ namespace SafePoint.Data.Entities
         public decimal LocX { get; set; }
         public decimal LocY { get; set; }
         public string UserToken { get; set; }
-        public decimal Distance { get; set; }
+        public double Distance { get; set; }
         public int MaxCapacity { get; set; }
+        public string Description { get; set; }
     }
 }

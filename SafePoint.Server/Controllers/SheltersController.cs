@@ -125,7 +125,7 @@ namespace SafePoint.Server.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            const int avg_distance_meters = 450; // 450 meters for average person when fast walking
+            const int avg_distance_meters = 10900000; // 450 meters for average person when fast walking
 
             // Remove the person from his old shelter
             var oldShelter = await _context.ShelterUsers.Where(x => x.UserToken == fcmToken).ToListAsync();
@@ -144,15 +144,15 @@ namespace SafePoint.Server.Controllers
 
             var currentLocation = new Location(locX, locY);
             const decimal pi180 = (decimal)(Math.PI / 180.0);
-            var shelters = await _context.NearbyShelters.FromSqlInterpolated($@"
+            var shelters = await _context.NearbyShelters.FromSqlRaw($@"
                 SELECT * FROM
-                (SELECT sh.""Id"", sh.""MaxCapacity"", sh.""LocX"", sh.""LocY"", su.""UserToken"", 6376500.0 * (2.0 * ATAN2(SQRT(Power(SIN(((sh.""LocY"" * {pi180}) - (sh.""LocX"" * {pi180}))/2), 2) + COS(sh.""LocX"" * {pi180}) * COS(sh.""LocY"" * {pi180}) *POW(SIN((sh.""LocX"" * {pi180} - (sh.""LocY""-{pi180}))/2),2)),
-                SQRT(1 - SQRT(Power(SIN(((sh.""LocY"" * {pi180}) - (sh.""LocX"" * {pi180}))/2), 2) + COS(sh.""LocX"" * {pi180}) * COS(sh.""LocY"" * {pi180}) *POW(SIN((sh.""LocX"" * {pi180} - (sh.""LocY""-{pi180}))/2),2))))) as Distance
-                FROM ""Shelters"" sh, ""ShelterUsers"" su
-                WHERE sh.""Id"" = su.""ShelterId"") shelterDistances
-                WHERE Distance < {avg_distance_meters}").ToListAsync();
+                (SELECT sh.""Id"", sh.""MaxCapacity"", sh.""Description"", sh.""LocX"", sh.""LocY"", su.""UserToken"", 2 * 6371000 * ASIN(SQRT((SIN(({locX}*(3.14159/180)-sh.""LocX""*(3.14159/180))/2))^2+COS({locX}*(3.14159/180))*COS(sh.""LocX""*(3.14159/180))*SIN((({locY}*(3.14159/180)-sh.""LocY""*(3.14159/180))/2))^2)) as DISTANCE
+                FROM ""Shelters"" sh
+                    Left join ""ShelterUsers"" su
+                        on sh.""Id"" = su.""ShelterId"") shelterDistances
+                    where distance < {avg_distance_meters}").ToListAsync();
 
-            var result = shelters.GroupBy(g => new { g.Id, g.LocX, g.LocY, g.Distance, g.MaxCapacity }).Select(o => new ShelterInfo
+            var result = shelters.GroupBy(g => new { g.Id, g.LocX, g.LocY, g.Description, g.Distance, g.MaxCapacity }).Select(o => new ShelterInfo
             {
                 Shelter = new Shelter
                 {
@@ -160,9 +160,10 @@ namespace SafePoint.Server.Controllers
                     LocX = o.Key.LocX,
                     LocY = o.Key.LocY,
                     MaxCapacity = o.Key.MaxCapacity,
+                    Description = o.Key.Description
                 },
                 Distance = o.Key.Distance,
-                AssignedUsers = o.Select(o => o.UserToken).ToList(),
+                AssignedUsers = o.Select(o => o.UserToken).Where(o=> o != null).ToList(),
             }).OrderBy(o=> o.AssignedUsers.Count).ToList();
 
 
@@ -179,10 +180,14 @@ namespace SafePoint.Server.Controllers
             if(selectedShelter != null)
             {
                 await AddUserToShelter(selectedShelter.Shelter);
-                return Ok(selectedShelter);
+                return Ok(selectedShelter.Shelter);
             }
 
-            selectedShelter = result.OrderBy(o=> o.Distance).First();
+            selectedShelter = result.OrderBy(o=> o.Distance).FirstOrDefault();
+            if(selectedShelter == null)
+            {
+                return NoContent();
+            }
 
             List<string> tokens = selectedShelter.AssignedUsers;
 
@@ -205,7 +210,7 @@ namespace SafePoint.Server.Controllers
             await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
             
 
-            return Ok(selectedShelter);
+            return Ok(selectedShelter.Shelter);
         }
 
         [HttpPost("ChangeUserFcmToken")]
