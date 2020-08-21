@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "safepoint-ebbda",
+  "private_key_id": "deda69f66190d0c3c7e3b0cf22fec4e1e6a412d6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDp/bb3+zhztQwz\nP99SvSEZ+64/o1zwVx6lBZCMm91FjO5vtXvLsvA4fPFxJgHE4GygrPxuRo2PXRrR\nIc6xX4N/rXwBosOYYonloy7aOnm+AWJ+yh1MrnUx/0j5yuT+ID5I1G+uVldgLgxt\nK6wqKVN/Uru0IY5LONf9bO/tLtQzfODmA9Fm84Z02kcouZv57Py70zbJbyQRhHUa\nS0oCCGIr7g1ikICYSpYKnI2V7oA2XdtFE6h4W070hWFdATwMGA/Cdbj0ER4kPoXU\nx6w0KZmwwE6lMj5kd1RJOL5qq02CLifEZ9Rlxld6TJOCokt3nTF1/0xFfH1Cu5ZZ\np9zEHo//AgMBAAECggEAKRFxQCP1HAXOPt56hUyRlzxfsGatRLedtsv7u1oN44uh\nO7UIJc/hrqBrRfcsP1A+cJL7+STj6qImN0duPh5r94hM6AKXvtKorkfOTNoPjQQ0\nM9moe9Fw21YZilIMj/e7xs+WTGx2CHj8kFqmbH31XDb6n9p13Yj8C8xHbgMWlnSC\nIKdT6SXvf5Ix9KtdIX2cz+GKViIJx7vI5JOAV5cXwurSLW2KMb3wZKAqhgFboXwg\nlnSSg9FL3v4AdqVdT1rLGPXxpITsZZg3Vi/iAlQa5n+Mtoo3yyA45ox+1Sx2vrki\n2MR9r4OHyFJqdYj/43Vnwe8wztBXoRPfrnYm0vUoEQKBgQD1Bk3Fz9hqyY/Y/Bus\nWloyDvvr+akOE/JvZ2FWb2KQrNFBY7e9/cpvrpIpScC6VBt624cTmRys0kv7P5TA\n3dzHEzIiCw3++ew87lCTXxJWNZOJlj0QhAsH8fui1mg8LiYYKON3g6Gqk0h47afU\nPj8DUkS8PzKzBFC2YELsEcntMQKBgQD0eOOlfcJ7Ns87REHBiMn4AsZZvdaUXYac\n/MMBVg6gE6iVutD6nZ0L2eWqgBrRpk6SQLpfvPxW7JQxf5Z6snxZuiKaj56PSnIL\nr+wDwyk9yt0cWDcJ29aDuAhRrgciTjEiBsiZ0f3gZSAbVvlX7tv6RoQec7IPj9/e\nfJjprvtELwKBgE4/ahzOyF0p608vC6NZ403zLQ5p10wQoK5lBFe3EHIFTnokXyxE\nXR6XUEPxMqQOcgwlCRkAH4EtU2h0IIwLDhNhFPR8NUcFByVaMc8uYEu5plkc6nlY\nwbES3PpeoED/t9ilTib/mWRAzrcXpi4IhtUHs72uLQGwUho72YNMFwExAoGBAIEs\nLvyOSmhYOX8TPbtIz46fyLY6PFsAX9QrKc5W7jtep8EViL4i8YwFgfho38LOoM1e\nLhvP+3TiZBsTUytZi6LNWuNX52vG5iOOvKHwSKZBvjrv0YUAB4RphNvDnDlgH03f\nT7cW4ZHjXOeVOQJhTxIamEyOzRKz7pHcO9+deV45AoGAW0ZB9qD8P0fyet+L5JOz\ntkVsqNb226Nj3SUSyhjo9gG3sboXSCiIHtry8X4EE+YEHP3x+/vCkhdhifJLS96u\nKqEQqRZq71AwpCW9t1T6Ryv4ovLqFJ3bzNBkTgQtp8f3+HOHXl1QNXfntLMftwif\nwiOV88mZus67+ATobPIfkZI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-a3paz@safepoint-ebbda.iam.gserviceaccount.com",
+  "client_id": "108299034322954992878",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-a3paz%40safepoint-ebbda.iam.gserviceaccount.com"
+}

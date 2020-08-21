@@ -195,7 +195,11 @@ namespace SafePoint.Server.Controllers
                 {
                     ["operationGuid"] = operationGuid
                 },
-                Tokens = tokens
+                Tokens = tokens,
+                Android = new AndroidConfig
+                {
+                    Priority = Priority.High
+                }
             };
 
             await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);

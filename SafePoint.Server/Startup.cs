@@ -13,6 +13,8 @@ using IdentityServer4.Models;
 using FirebaseAdmin.Messaging;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using System.IO;
+using System;
 
 namespace SafePoint.Server
 {
@@ -70,7 +72,7 @@ namespace SafePoint.Server
 
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromAccessToken(Configuration["FCMToken"]),
+                Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "key.json"))
             });
         }
 
