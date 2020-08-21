@@ -146,11 +146,10 @@ namespace SafePoint.Server.Controllers
             const decimal pi180 = (decimal)(Math.PI / 180.0);
             var shelters = await _context.NearbyShelters.FromSqlInterpolated($@"
                 SELECT * FROM
-                (SELECT Id, MaxCapacity, LocX, LocY, UserToken, Distance = 6376500.0 * (2.0 * ATAN2(SQRT(Power(SIN(((LocY * {pi180}) - (LocX * {pi180}))/2), 2) + COS(LocX * {pi180}) * COS(LocY * {pi180}) *POW(SIN((LocX * {pi180} - (LocY-{pi180}))/2),2),
-                SQRT(1 - SQRT(Power(SIN(((LocY * {pi180}) - (LocX * {pi180}))/2), 2) + COS(LocX * {pi180}) * COS(LocY * {pi180}) *POW(SIN((LocX * {pi180} - (LocY-{pi180}))/2),2))
-                FROM Shelters
-                   INNER JOIN SheltersUsers
-                       on Shelters.Id = ShelterId)
+                (SELECT sh.""Id"", sh.""MaxCapacity"", sh.""LocX"", sh.""LocY"", su.""UserToken"", 6376500.0 * (2.0 * ATAN2(SQRT(Power(SIN(((sh.""LocY"" * {pi180}) - (sh.""LocX"" * {pi180}))/2), 2) + COS(sh.""LocX"" * {pi180}) * COS(sh.""LocY"" * {pi180}) *POW(SIN((sh.""LocX"" * {pi180} - (sh.""LocY""-{pi180}))/2),2)),
+                SQRT(1 - SQRT(Power(SIN(((sh.""LocY"" * {pi180}) - (sh.""LocX"" * {pi180}))/2), 2) + COS(sh.""LocX"" * {pi180}) * COS(sh.""LocY"" * {pi180}) *POW(SIN((sh.""LocX"" * {pi180} - (sh.""LocY""-{pi180}))/2),2))))) as Distance
+                FROM ""Shelters"" sh, ""ShelterUsers"" su
+                WHERE sh.""Id"" = su.""ShelterId"") shelterDistances
                 WHERE Distance < {avg_distance_meters}").ToListAsync();
 
             var result = shelters.GroupBy(g => new { g.Id, g.LocX, g.LocY, g.Distance, g.MaxCapacity }).Select(o => new ShelterInfo
