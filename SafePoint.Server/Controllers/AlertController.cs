@@ -22,7 +22,11 @@ namespace SafePoint.Server.Controllers
                     ["locY"] = locY.ToString(),
                     ["meterRadius"] = meterRadius.ToString()
                 },
-                Topic = "israel-alerts"
+                Topic = "israel-alerts",
+                Android = new AndroidConfig
+                {
+                    Priority = Priority.High
+                }
             };
             await FirebaseMessaging.DefaultInstance.SendAsync(message);
             return Ok();
